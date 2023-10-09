@@ -15,14 +15,17 @@ fmt:
 	(deno fmt -q --ignore=./${DART_PROJECT_ROOT}/build,./${DART_PROJECT_ROOT}/.dart_tool,./${RUST_PROJECT_ROOT}/target)
 	(dart format -o none .)
 	(taplo format)
+	(cd ${RUST_PROJECT_ROOT}/ && cargo fmt)
 
 lint:
 	(cd proto/ && buf lint)
 	(taplo lint)
 	(cd ${DART_PROJECT_ROOT}/ && dart analyze --fatal-infos)
+	(cd ${RUST_PROJECT_ROOT}/ && cargo clippy)
 
 build:
 	(cd ${DART_PROJECT_ROOT}/ && flutter build web)
+	(cd ${RUST_PROJECT_ROOT}/ && cargo build)
 
 proto-fe:
 	(cd ${DART_PROJECT_ROOT}/ && mkdir -p lib/src/generated/ && \
