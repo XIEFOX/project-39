@@ -3,6 +3,8 @@ let
 in
   pkgs.mkShell {
     packages = with pkgs; [
+      libiconv
+
       fd
       gnumake
 
@@ -14,5 +16,6 @@ in
 
       protobuf
       buf
+      protoc-gen-dart
     ];
   }

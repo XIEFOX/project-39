@@ -1,3 +1,5 @@
 syntax = "proto3";
 
 package project_39.v1;
+
+service Project39Service {}

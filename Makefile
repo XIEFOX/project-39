@@ -8,7 +8,7 @@ RUST_PROJECT_ROOT := project-39-be
 all: fmt proto-fe build lint
 
 fmt:
-	(fd -e nix -x alejandra -q)
+	(fd -e nix -X alejandra -q)
 	(fd -e yaml -x yamlfmt && fd -e yml -x yamlfmt)
 	(fd -e proto -x clang-format -i)
 	(fd -e c -x clang-format -i && fd -e cpp -x clang-format -i && fd -e h -x clang-format -i && fd -e hpp -x clang-format -i)
@@ -22,6 +22,7 @@ lint:
 	(taplo lint)
 	(cd ${DART_PROJECT_ROOT}/ && dart analyze --fatal-infos)
 	(cd ${RUST_PROJECT_ROOT}/ && cargo clippy)
+	(fd -e sh -X shellcheck)
 
 build:
 	(cd ${DART_PROJECT_ROOT}/ && flutter build web)
