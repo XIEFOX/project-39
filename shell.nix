@@ -14,6 +14,7 @@ in
       taplo
       deno
 
+      rustup
       protobuf
       buf
       protoc-gen-dart
