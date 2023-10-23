@@ -1,5 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:project_39_fe/src/generated/project_39/v1/project_39.pbgrpc.dart';
 import 'package:project_39_fe/src/login.dart';
+//import 'package:flutter_splash_screen/flutter_splash_screen.dart';
+import 'dart:async';
+import 'package:grpc/grpc_web.dart';
+
+Project39ServiceClient newClient () {
+  final GrpcWebClientChannel channel = GrpcWebClientChannel.xhr(Uri.parse("127.0.0.1:9945"));
+  return Project39ServiceClient(channel);
+}
+
+void callInterface () async {
+  final client = newClient();
+  final result = await client.displayObjectsInfoBatch(DisplayObjectsInfoBatchRequest(batchSize: 100));
+  final List<DisplayObjectsInfo> infos = result.displayObjectsInfo;
+  infos[0].name;
+  infos[0].url;
+  infos[0].desc;
+
+  final List<Widget> cards = infos.map((e) {
+    return Card(
+      
+    );
+  }).toList();
+
+  final result1 = await client.getUserInfo(GetUserInfoRequest(userName: "ksy") );
+  result1.userAddr;
+  result1.userAvatarUrl;
+  result1.userMail;
+}
 
 class FilledCardExample extends StatelessWidget {
   const FilledCardExample({super.key});
@@ -10,10 +39,11 @@ class FilledCardExample extends StatelessWidget {
       child: Card(
         elevation: 0,
         color: Theme.of(context).colorScheme.surfaceVariant,
-        child:  SizedBox(
+        child: SizedBox(
           width: 400,
           height: 300,
-          child: Center(child: Column(
+          child: Center(
+              child: Column(
             children: <Widget>[
               Container(
                 child: Image.asset(
@@ -24,18 +54,16 @@ class FilledCardExample extends StatelessWidget {
               ),
               ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: AssetImage(
-                      "images/2.jpg"),
+                  backgroundImage: AssetImage("images/2.jpg"),
                 ),
                 title: Text("Candy Shop"),
-                subtitle:  Text(
+                subtitle: Text(
                   "Flutter is Goole's moblie UI framework for crafting higt ",
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
               )
             ],
-
           )),
         ),
       ),
@@ -62,7 +90,7 @@ class _DrawerState extends State<StatefulDrawer> {
             decoration: BoxDecoration(
                 color: Colors.blue,
                 image: DecorationImage(
-                    image: AssetImage("images/3.jpg"), fit: BoxFit.cover)),
+                    image: AssetImage("images/3.jpeg"), fit: BoxFit.cover)),
           ),
           ListTile(
             title: Text('登陆'),
@@ -113,6 +141,69 @@ void main() {
           body: HomePage()),
     ),
   );
+}
+
+class HomePageWithSplashScreen extends StatefulWidget {
+  @override
+  State<HomePageWithSplashScreen> createState() =>
+      _HomePageWithSplashScreenState();
+}
+
+class _HomePageWithSplashScreenState extends State<HomePageWithSplashScreen> {
+  bool _init = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_init) {
+      setState(() {
+        _init = false;
+      });
+      return Splash();
+    } else {
+      return buildApp();
+    }
+  }
+}
+
+Widget buildApp() {
+  return Scaffold(
+      appBar: AppBar(title: const Text('宠吾'), foregroundColor: Colors.purple),
+      drawer: const StatefulDrawer(),
+      body: HomePage());
+}
+
+class Splash extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _SplashState();
+}
+
+class _SplashState extends State<Splash> {
+  @override
+  void initState() async {
+    super.initState();
+    // await Future.delayed(const Duration(seconds: 3));
+    // // ignore: use_build_context_synchronously
+    // Navigator.push(context, MaterialPageRoute(builder: (context) {
+    //   return buildApp();
+    // }));
+
+    startTime();
+  }
+
+  startTime() async {
+    return Timer(const Duration(seconds: 5), () {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => buildApp()));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text("欢迎来到我的应用！"),
+      ),
+    );
+  }
 }
 
 class HomePage extends StatefulWidget {

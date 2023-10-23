@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+//import 'package:splashscreen/splashscreen.dart';
 
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+
+
+class AfterSplash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [Image.asset('proto/project_39/v1/2.jpeg')],
-    ));
+      appBar: AppBar(
+        title: Text('主页'),
+      ),
+      body: Center(
+        child: Text('你好，世界！'),
+      ),
+    );
   }
 }

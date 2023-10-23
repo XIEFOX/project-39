@@ -5,6 +5,8 @@ package project_39.v1;
 service Project39Service {
   rpc DisplayObjectsInfoBatch(DisplayObjectsInfoBatchRequest)
       returns (DisplayObjectsInfoBatchResponse);
+
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
 }
 
 message DisplayObjectsInfoBatchRequest { int32 batch_size = 1; }
@@ -17,4 +19,14 @@ message DisplayObjectsInfo {
   string url = 1;
   string name = 2;
   string desc = 3;
+}
+
+message GetUserInfoRequest { string user_name = 1; }
+
+message GetUserInfoResponse {
+  string user_name = 1;
+  string user_avatar_url = 2;
+  string user_mail = 3;
+  string user_mobile = 4;
+  string user_addr = 5;
 }
