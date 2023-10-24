@@ -31,38 +31,47 @@ void callInterface () async {
 }
 
 class FilledCardExample extends StatelessWidget {
-  const FilledCardExample({super.key});
+   final bool enabled;
+   final  String  name;
+   final  String  url;
+   final  String  decs;
+   final  String useravarurl;
+
+   const FilledCardExample({super.key, required this.enabled, required this.name, required this.url, required this.decs, required this.useravarurl});
 
   @override
   Widget build(BuildContext context) {
+    final VoidCallback? onPressed = enabled ? () {} : null;
     return Center(
       child: Card(
         elevation: 0,
         color: Theme.of(context).colorScheme.surfaceVariant,
         child: SizedBox(
-          width: 400,
-          height: 300,
+          width: 500,
+          height: 400,
           child: Center(
               child: Column(
             children: <Widget>[
               Container(
-                child: Image.asset(
-                  "images/1.jpeg",
-                  fit: BoxFit.cover,
+                child: Positioned.fill(
+                  child:Image.asset("$url",
+                  fit: BoxFit.contain,)
+                  
                 ),
-                margin: EdgeInsets.all(10),
+                margin: EdgeInsets.all(3),
               ),
               ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: AssetImage("images/2.jpg"),
+                  backgroundImage: AssetImage("$useravarurl"),
                 ),
-                title: Text("Candy Shop"),
+                title: Text("$name"),
                 subtitle: Text(
-                  "Flutter is Goole's moblie UI framework for crafting higt ",
+                  "$decs",
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                  maxLines: 3,
                 ),
-              )
+              ),IconButton.filled(
+              onPressed: onPressed, icon: const Icon(Icons.favorite_rounded)),
             ],
           )),
         ),
@@ -90,7 +99,7 @@ class _DrawerState extends State<StatefulDrawer> {
             decoration: BoxDecoration(
                 color: Colors.blue,
                 image: DecorationImage(
-                    image: AssetImage("images/3.jpeg"), fit: BoxFit.cover)),
+                    image: AssetImage("images/3.jpg"), fit: BoxFit.cover)),
           ),
           ListTile(
             title: Text('登陆'),
@@ -242,7 +251,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
   Widget buildBody(int currentPage) {
+    List<Widget> _initGridview()
+    {  
+             return infos.map((e) {
+              return FilledCardExample(enabled: false, name: infos[e].name, url: infos[e].url, decs: infos[e].decs, useravarurl: "$(result1.userAvatarUrl)");
+  }).toList();
+    }
     if (currentPage == 0) {
       return Container(
           child: Padding(
@@ -297,18 +313,62 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Expanded(
                   flex: 2,
-                  child: GridView(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2),
-                    children: [
-                      FilledCardExample(),
-                      FilledCardExample(),
-                      FilledCardExample()
-                    ],
+                  child: GridView.count(
+                   // gridDelegate:
+                       // const SliverGridDelegateWithFixedCrossAxisCount(
+                        //    crossAxisCount: 2),
+                      padding: const EdgeInsets.all(8.0),
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      crossAxisCount: 250,
+                      children: _initGridview()
+                        
+                    
+                    
                   ),
                 )
               ])));
+    }else  if(currentPage==2)
+    {
+      return Container(
+        child: ListView(
+               children: [ //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
+             Padding( padding: EdgeInsets.symmetric(horizontal: 15),
+              child: const TextField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: '用户名',
+                    hintText: 'Enter valid email id as abc@gmail.com'),
+              )),
+              Padding( padding: EdgeInsets.symmetric(horizontal: 15),
+              child: TextField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: '邮箱',
+                    hintText: 'Enter valid email id as abc@gmail.com'),
+              )),
+              Padding( padding: EdgeInsets.symmetric(horizontal: 15),
+              child: TextField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: '手机号',
+                    hintText: 'Enter valid email id as abc@gmail.com'),
+              )),Padding( padding: EdgeInsets.symmetric(horizontal: 15),
+              child: TextField(
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: '地址',
+                    hintText: 'Enter valid email id as abc@gmail.com'),
+              )),
+              //button保存个人信息
+              ],
+             
+            ),
+
+      );
+    }else if(currentPage==3)
+    {
+      return Container();
     }
 
     return Center(
