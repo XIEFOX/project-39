@@ -1,35 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:project_39_fe/src/generated/project_39/v1/project_39.pbgrpc.dart';
+//import 'package:project_39_fe/src/generated/project_39/v1/project_39.pbgrpc.dart';
 import 'package:project_39_fe/src/login.dart';
+//import 'package:image_picker/image_picker.dart';
 //import 'package:flutter_splash_screen/flutter_splash_screen.dart';
 import 'dart:async';
-import 'package:grpc/grpc_web.dart';
-
-Project39ServiceClient newClient () {
-  final GrpcWebClientChannel channel = GrpcWebClientChannel.xhr(Uri.parse("127.0.0.1:9945"));
-  return Project39ServiceClient(channel);
-}
-
-void callInterface () async {
-  final client = newClient();
-  final result = await client.displayObjectsInfoBatch(DisplayObjectsInfoBatchRequest(batchSize: 100));
-  final List<DisplayObjectsInfo> infos = result.displayObjectsInfo;
-  infos[0].name;
-  infos[0].url;
-  infos[0].desc;
-
-  final List<Widget> cards = infos.map((e) {
-    return Card(
-      
-    );
-  }).toList();
-
-  final result1 = await client.getUserInfo(GetUserInfoRequest(userName: "ksy") );
-  result1.userAddr;
-  result1.userAvatarUrl;
-  result1.userMail;
-}
-
+import './1.dart';
+import './menum.dart';
+//import 'package:grpc/grpc_web.dart';
 class FilledCardExample extends StatelessWidget {
    final bool enabled;
    final  String  name;
@@ -41,7 +18,7 @@ class FilledCardExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final VoidCallback? onPressed = enabled ? () {} : null;
+    final VoidCallback? onPressed = enabled ? () {} : null;//这边有一个收养的onpressed事件
     return Center(
       child: Card(
         elevation: 0,
@@ -54,7 +31,7 @@ class FilledCardExample extends StatelessWidget {
             children: <Widget>[
               Container(
                 child: Positioned.fill(
-                  child:Image.asset("$url",
+                  child:Image.asset(url,
                   fit: BoxFit.contain,)
                   
                 ),
@@ -64,9 +41,9 @@ class FilledCardExample extends StatelessWidget {
                 leading: CircleAvatar(
                   backgroundImage: AssetImage("$useravarurl"),
                 ),
-                title: Text("$name"),
+                title: Text(name),
                 subtitle: Text(
-                  "$decs",
+                  decs,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
                 ),
@@ -80,47 +57,8 @@ class FilledCardExample extends StatelessWidget {
   }
 }
 
-class StatefulDrawer extends StatefulWidget {
-  const StatefulDrawer({super.key});
 
-  @override
-  State<StatefulDrawer> createState() => _DrawerState();
-}
 
-class _DrawerState extends State<StatefulDrawer> {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            child: Text('Drawer Header'),
-            decoration: BoxDecoration(
-                color: Colors.blue,
-                image: DecorationImage(
-                    image: AssetImage("images/3.jpg"), fit: BoxFit.cover)),
-          ),
-          ListTile(
-            title: Text('登陆'),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(
-                builder: (context) {
-                  return LoginDemo();
-                },
-              ));
-            },
-          ),
-          ListTile(
-            title: Text('退出'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
-  }
   //   return  Container(
 
   //     child:const Column(
@@ -136,7 +74,6 @@ class _DrawerState extends State<StatefulDrawer> {
 
   //   ));
   // }
-}
 
 void main() {
   runApp(
@@ -144,238 +81,100 @@ void main() {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
-          appBar:
-              AppBar(title: const Text('宠吾'), foregroundColor: Colors.purple),
-          drawer: const StatefulDrawer(),
-          body: HomePage()),
+          
+          body: IntroPage()),//HomePage()
+          routes: {"/1":(context) => const IntroPage(),
+                   "/menupage":(context) => const MenuPage()},
     ),
   );
 }
 
-class HomePageWithSplashScreen extends StatefulWidget {
-  @override
-  State<HomePageWithSplashScreen> createState() =>
-      _HomePageWithSplashScreenState();
-}
-
-class _HomePageWithSplashScreenState extends State<HomePageWithSplashScreen> {
-  bool _init = false;
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_init) {
-      setState(() {
-        _init = false;
-      });
-      return Splash();
-    } else {
-      return buildApp();
-    }
-  }
-}
-
-Widget buildApp() {
-  return Scaffold(
-      appBar: AppBar(title: const Text('宠吾'), foregroundColor: Colors.purple),
-      drawer: const StatefulDrawer(),
-      body: HomePage());
-}
-
-class Splash extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _SplashState();
-}
-
-class _SplashState extends State<Splash> {
-  @override
-  void initState() async {
-    super.initState();
-    // await Future.delayed(const Duration(seconds: 3));
-    // // ignore: use_build_context_synchronously
-    // Navigator.push(context, MaterialPageRoute(builder: (context) {
-    //   return buildApp();
-    // }));
-
-    startTime();
-  }
-
-  startTime() async {
-    return Timer(const Duration(seconds: 5), () {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => buildApp()));
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text("欢迎来到我的应用！"),
-      ),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int currentPage = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: buildBody(currentPage),
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (tapped) {
-          setState(() {
-            currentPage = tapped;
-          });
-        },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pets),
-            label: '领养',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline),
-            label: '上传信息',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '主页',
-          ),
-        ],
-      ),
-    );
-  }
 
 
-  Widget buildBody(int currentPage) {
-    List<Widget> _initGridview()
-    {  
-             return infos.map((e) {
-              return FilledCardExample(enabled: false, name: infos[e].name, url: infos[e].url, decs: infos[e].decs, useravarurl: "$(result1.userAvatarUrl)");
-  }).toList();
-    }
-    if (currentPage == 0) {
-      return Container(
-          child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(children: [
-                Expanded(
-                  flex: 1,
-                  child: SearchAnchor(builder:
-                      (BuildContext context, SearchController controller) {
-                    return SearchBar(
-                      controller: controller,
-                      padding: const MaterialStatePropertyAll<EdgeInsets>(
-                          EdgeInsets.symmetric(horizontal: 8.0)),
-                      onTap: () {
-                        controller.openView();
-                      },
-                      onChanged: (_) {
-                        controller.openView();
-                      },
-                      leading: const Icon(Icons.search),
-                      trailing: <Widget>[
-                        Tooltip(
-                          message: 'Change brightness mode',
-                          child: IconButton(
-                            // isSelected: isDark,
-                            onPressed: () {
-                              setState(() {
-                                // isDark = !isDark;
-                              });
-                            },
-                            icon: const Icon(Icons.wb_sunny_outlined),
-                            selectedIcon:
-                                const Icon(Icons.brightness_2_outlined),
-                          ),
-                        )
-                      ],
-                    );
-                  }, suggestionsBuilder:
-                      (BuildContext context, SearchController controller) {
-                    return List<ListTile>.generate(5, (int index) {
-                      final String item = 'item $index';
-                      return ListTile(
-                        title: Text(item),
-                        onTap: () {
-                          setState(() {
-                            controller.closeView(item);
-                          });
-                        },
-                      );
-                    });
-                  }),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: GridView.count(
-                   // gridDelegate:
-                       // const SliverGridDelegateWithFixedCrossAxisCount(
-                        //    crossAxisCount: 2),
-                      padding: const EdgeInsets.all(8.0),
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      crossAxisCount: 250,
-                      children: _initGridview()
-                        
-                    
-                    
-                  ),
-                )
-              ])));
-    }else  if(currentPage==2)
-    {
-      return Container(
-        child: ListView(
-               children: [ //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
-             Padding( padding: EdgeInsets.symmetric(horizontal: 15),
-              child: const TextField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '用户名',
-                    hintText: 'Enter valid email id as abc@gmail.com'),
-              )),
-              Padding( padding: EdgeInsets.symmetric(horizontal: 15),
-              child: TextField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '邮箱',
-                    hintText: 'Enter valid email id as abc@gmail.com'),
-              )),
-              Padding( padding: EdgeInsets.symmetric(horizontal: 15),
-              child: TextField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '手机号',
-                    hintText: 'Enter valid email id as abc@gmail.com'),
-              )),Padding( padding: EdgeInsets.symmetric(horizontal: 15),
-              child: TextField(
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: '地址',
-                    hintText: 'Enter valid email id as abc@gmail.com'),
-              )),
-              //button保存个人信息
-              ],
+// Widget buildApp() {
+//   return Scaffold(
+//       appBar: AppBar(title: const Text('宠吾'), foregroundColor: Colors.purple),
+//       drawer: const StatefulDrawer(),
+//       body: HomePage());
+// }
+
+
+
+
+  //     Future<void> selectImageFromGallery() async {
+  // final ImagePicker _picker ;
+  // try{_picker=ImagePicker();
+  // final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  // if (image != null) {
+  //   // 使用选择的图片
+  //   print('选择的图片路径：${image.path}');
+  // } else {
+  //   print('没有选择图片。');
+  // }
+  // }catch(e){}
+  // // 从图库选择图片
+  //  return Scaffold(
+  //       body: SingleChildScrollView(
+  //              child: Column(
+  //               children:<Widget>[
+  //               Row(
+  //                 children:[
+                  
+  //                 SizedBox.square(
+  //                 dimension: 30,
+  //                 child:Stack(children:[Image.asset("images/4.jpeg"),const Icon(Icons.add_a_photo)])
+  //               )  ,
+
+  //               //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
+                
+  //            const Padding( padding: EdgeInsets.symmetric(horizontal: 15),
+  //             child: TextField(
+  //               decoration: InputDecoration(
+  //                   border: OutlineInputBorder(),
+  //                   labelText: '用户名',
+  //                   hintText: "柯言"),
+  //             )),
+  //             const Padding( padding: EdgeInsets.symmetric(horizontal: 15),
+  //             child: TextField(
+  //               decoration: InputDecoration(
+  //                   border: OutlineInputBorder(),
+  //                   labelText: '邮箱',
+  //                   hintText: '1399606013@QQ.com'),
+  //             ))]),
+  //             const Padding( 
+  //               padding: EdgeInsets.symmetric(horizontal: 15),
+  //             child: TextField(
+  //               decoration: InputDecoration(
+  //                   border: OutlineInputBorder(),
+  //                   labelText: '手机号',
+  //                   hintText: '18905917866')),
+  //             ),
+  //             const Padding( padding: EdgeInsets.symmetric(horizontal: 15),
+  //             child: TextField(
+  //               decoration: InputDecoration(
+  //                   border: OutlineInputBorder(),
+  //                   labelText: '地址',
+  //                   hintText: 'xxxxxxx'),
+  //             )),
+  //             //button保存个人信息
+  //             TextButton(
+  //             onPressed: () {
+  //               //上传数据
+  //             },
+  //             child: const Text(
+  //               '保存修改',
+  //               style:  TextStyle(color: Colors.blue, fontSize: 15),
+  //             ),
+  //           ),
+  //               ]
+  //              ),
              
-            ),
+  //           ),
 
-      );
-    }else if(currentPage==3)
-    {
-      return Container();
-    }
+  //     );
 
-    return Center(
-      child: Text("$currentPage"),
-    );
-  }
-}
+  
+
 
 // 这里这么几行就是最简单的一个 material design 程序的例子，然后 home 本身需要是一个组件
 // 然后我们假设我们不知道主页应该放什么，就去网上找例子

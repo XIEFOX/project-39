@@ -20,12 +20,12 @@ class _LoginDemoState extends State<LoginDemo> {
               padding: const EdgeInsets.only(top: 60.0),
               child: Center(
                 child: Container(
-                    width: 200,
-                    height: 150,
+                    width: double.infinity,
+                    height: 300,
                     /*decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(50.0)),*/
-                    child: Image.asset('images/3.jpeg')),
+                    child: Image.asset('images/favicon.png')),
               ),
             ),
             Padding(
