@@ -200,26 +200,27 @@ class _HomePageState extends State<HomePage> {
                   }),
                 ),
                // const InputChipExample(),
-                Expanded(
-                  flex: 2,
-                  child: GridView.count(
-                   // gridDelegate:
-                       // const SliverGridDelegateWithFixedCrossAxisCount(
-                        //    crossAxisCount: 2),
-                      padding: const EdgeInsets.all(8.0),
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      crossAxisCount: 250,
-                      children: const [
-                        //FilledCardExample(enabled: false, name: "狗", url: "images/5.jpg", decs: "这是一只狗", useravarurl:"iamges/6.jpg"),
-                      //FilledCardExample(enabled: false, name: "狗", url: "images/5.jpg", decs: "这是一只狗", useravarurl:"iamges/6.jpg"),
-                      //FilledCardExample(enabled: false, name: "狗", url: "images/5.jpg", decs: "这是一只狗", useravarurl:"iamges/6.jpg"),
-                      ]
+                
+                   GridView(
+                   gridDelegate:
+                       const SliverGridDelegateWithFixedCrossAxisCount(
+                           crossAxisCount: 2),
+                           children: [ FilledCardExample( enabled: false, name: '狗', url: 'images/6.jpg', useravarurl: 'images/5.jpg', decs: '一只很可爱的狗狗',),
+                            FilledCardExample( enabled: false, name: '狗', url: 'images/6.jpg', useravarurl: 'images/5.jpg', decs: '一只很可爱的狗狗',),
+                             FilledCardExample( enabled: false, name: '狗', url: 'images/6.jpg', useravarurl: 'images/5.jpg', decs: '一只很可爱的狗狗',)
+                           ],
+                      // padding: const EdgeInsets.all(8.0),
+                      // crossAxisSpacing: 10,
+                      // mainAxisSpacing: 10,
+                      // crossAxisCount: 2,
+                      // children:  [
+                      
+                      // ]
                         
                     
                     
                   ),
-                )
+                
               ])));
     }else  if(currentPage==2)
     {

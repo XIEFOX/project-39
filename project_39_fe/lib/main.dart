@@ -8,6 +8,8 @@ import './1.dart';
 import './menum.dart';
 import './user.dart';
 import './card.dart';
+import './adopt.dart';
+import './test.dart';
 //import 'package:grpc/grpc_web.dart';
 
 
@@ -36,7 +38,7 @@ void main() {
       theme: ThemeData(useMaterial3: true),
       home: const Scaffold(
           
-          body: FilledCardExample(enabled: false, useravarurl: 'iamges/1.jpeg', name: 'Ke', url: 'images/2.jpeg', decs: '这是一个人',)),//HomePage()
+          body: IntroPage()),//HomePage()
           routes: {"/1":(context) => const IntroPage(),
                    "/menupage":(context) => const MenuPage()},
     ),

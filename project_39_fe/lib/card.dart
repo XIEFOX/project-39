@@ -11,24 +11,38 @@ class FilledCardExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final VoidCallback? onPressed = enabled ? () {} : null;//这边有一个收养的onpressed事件
-    return Center(
+    return SingleChildScrollView(
+      
+      child:
+    Flexible(
       child: Card(
+        
         elevation: 0,
         color: Theme.of(context).colorScheme.surfaceVariant,
         child: SizedBox(
           width: 500,
           height: 400,
+          
           child: Center(
               child: Column(
             children: <Widget>[
+              Expanded(flex:6,child:
               Container(
-                child: Positioned.fill(
-                  child:Image.asset(url,
-                  fit: BoxFit.contain,)
-                  
-                ),
+                width: double.infinity,
                 margin: EdgeInsets.all(3),
-              ),
+                     
+                child: Positioned.fill(
+                  child:ClipRRect(
+                    borderRadius:BorderRadius.
+                    only(bottomLeft: Radius.circular(80),bottomRight: Radius.circular(80),topRight: Radius.circular(20),topLeft: Radius.circular(20)),
+                    child: Image.asset(url,
+                  fit: BoxFit.cover,
+                  
+                  )
+                  
+                )),
+              )),
+              Expanded(flex:3,child:
               ListTile(
                 leading: CircleAvatar(
                   backgroundImage: AssetImage(useravarurl),
@@ -39,13 +53,16 @@ class FilledCardExample extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
                 ),
-              ),Row(children:[IconButton.filled(
-              onPressed: onPressed, icon: const Icon(Icons.favorite_rounded)),const ActionChipExample()])
+                
+              ),),
+              Expanded(flex:1,child:
+              Row(children:[SizedBox(width: 20,)  ,IconButton.filled(
+              onPressed: onPressed, icon: const Icon(Icons.favorite_rounded)),SizedBox(width: 330,) ,ActionChipExample()]))
             ],
           )),
         ),
       ),
-    );
+    ));
   }
 }
 class ActionChipExample extends StatefulWidget {
