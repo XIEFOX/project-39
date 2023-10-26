@@ -2,4 +2,111 @@ syntax = "proto3";
 
 package project_39.v1;
 
-service Project39Service {}
+service Project39Service {
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
+  rpc PutUserInfo(PutUserInfoRequest) returns (PutUserInfoResponse);
+  rpc DelUserInfo(DelUserInfoRequest) returns (DelUserInfoResponse);
+
+  rpc LogIn(LogInRequest) returns (LogInResponse);
+  rpc LogOut(LogOutRequest) returns (LogOutResponse);
+
+  rpc GetDisplayObjectBatch(GetDisplayObjectBatchRequest)
+      returns (GetDisplayObjectBatchResponse);
+  rpc PutDisplayObjectBatch(PutDisplayObjectBatchRequest)
+      returns (PutDisplayObjectBatchResponse);
+  rpc DelDisplayObject(DelDisplayObjectRequest)
+      returns (DelDisplayObjectResponse);
+
+  rpc GetDisplayObjectStatus(GetDisplayObjectStatusRequest)
+      returns (GetDisplayObjectStatusResponse);
+  rpc PutDisplayObjectStatus(PutDisplayObjectStatusRequest)
+      returns (PutDisplayObjectStatusResponse);
+}
+
+message GetUserInfoRequest { uint64 user_id = 1; }
+
+message GetUserInfoResponse {
+  uint64 user_id = 1;
+  string user_name = 2;
+  string user_email = 3;
+  string profile_picture_url = 4;
+}
+
+message PutUserInfoRequest {
+  string token = 1;
+
+  string user_name = 2;
+  string user_email = 3;
+  bytes profile_picture_bin = 4;
+  string password_hash_salted = 5;
+}
+
+message PutUserInfoResponse { uint64 user_id = 1; }
+
+message DelUserInfoRequest {
+  string token = 1;
+
+  uint64 user_id = 2;
+}
+
+message DelUserInfoResponse {}
+
+message LogInRequest {
+  uint64 user_id = 1;
+  string password_hash_salted = 2;
+}
+
+message LogInResponse {
+  uint64 user_id = 1;
+  string token = 2;
+}
+
+message LogOutRequest {
+  string token = 1;
+  string password_hash_salted = 2;
+
+  uint64 user_id = 3;
+}
+
+message LogOutResponse {}
+
+message DisplayObject {
+  uint64 obj_id = 1;
+
+  string profile_picture_url = 2;
+  string profile_picture_bin = 3;
+
+  string desc = 4;
+}
+
+message GetDisplayObjectBatchRequest { uint32 len = 1; }
+
+message GetDisplayObjectBatchResponse { repeated DisplayObject objs = 1; }
+
+message PutDisplayObjectBatchRequest {
+  string token = 1;
+
+  repeated DisplayObject objs = 2;
+}
+
+message PutDisplayObjectBatchResponse { repeated uint64 obj_ids = 1; }
+
+message DelDisplayObjectRequest {
+  string token = 1;
+
+  uint64 obj_id = 2;
+}
+
+message DelDisplayObjectResponse {}
+
+message GetDisplayObjectStatusRequest { uint64 obj_id = 1; }
+
+message GetDisplayObjectStatusResponse { DisplayObject obj = 1; }
+
+message PutDisplayObjectStatusRequest {
+  string token = 1;
+
+  DisplayObject obj = 2;
+}
+
+message PutDisplayObjectStatusResponse {}
