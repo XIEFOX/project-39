@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_39_fe/home.dart';
 import 'package:project_39_fe/register.dart';
 
 const _horizontalPadding = 24.0;
@@ -144,7 +145,11 @@ class _RegisterAndNextButtons extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  throw UnimplementedError();
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) {
+                      return const HomePage();
+                    },
+                  ));
                 },
                 child: const Padding(
                   padding: buttonTextPadding,

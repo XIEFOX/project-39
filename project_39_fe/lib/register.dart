@@ -139,8 +139,23 @@ class _RegisterAndNextButtons extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(7)),
                   ),
                 ),
-                onPressed: () {
-                  throw UnimplementedError();
+                onPressed: () async {
+                  await showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('注册成功'),
+                      content: const Text('即将返回登陆页面'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context, 'OK');
+                            Navigator.pop(context);
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 child: const Padding(
                   padding: buttonTextPadding,
