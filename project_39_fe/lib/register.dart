@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:project_39_fe/register.dart';
 
 const _horizontalPadding = 24.0;
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class _ShrineLogo extends StatelessWidget {
         children: [
           const SizedBox(height: 16),
           Text(
-            '登陆',
+            '注册',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ],
@@ -105,7 +104,7 @@ class _RegisterAndNextButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    // final colorScheme = Theme.of(context).colorScheme;
 
     const buttonTextPadding =
         EdgeInsets.symmetric(horizontal: 24, vertical: 16);
@@ -116,26 +115,23 @@ class _RegisterAndNextButtons extends StatelessWidget {
             spacing: 0,
             alignment: MainAxisAlignment.end,
             children: [
-              TextButton(
-                style: TextButton.styleFrom(
-                  shape: const BeveledRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7)),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.of(context, rootNavigator: true)
-                      .push(MaterialPageRoute(builder: (context) {
-                    return const RegisterPage();
-                  }));
-                },
-                child: Padding(
-                  padding: buttonTextPadding,
-                  child: Text(
-                    '注册',
-                    style: TextStyle(color: colorScheme.onSurface),
-                  ),
-                ),
-              ),
+              // TextButton(
+              //   style: TextButton.styleFrom(
+              //     shape: const BeveledRectangleBorder(
+              //       borderRadius: BorderRadius.all(Radius.circular(7)),
+              //     ),
+              //   ),
+              //   onPressed: () {
+              //     Navigator.of(context, rootNavigator: true).pop();
+              //   },
+              //   child: Padding(
+              //     padding: buttonTextPadding,
+              //     child: Text(
+              //       '注册',
+              //       style: TextStyle(color: colorScheme.onSurface),
+              //     ),
+              //   ),
+              // ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   elevation: 8,
