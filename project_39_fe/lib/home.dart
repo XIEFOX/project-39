@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_39_fe/adopt.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,8 +16,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: buildHomePageBody(_bottomNavigationBarSelectedIndex),
       bottomNavigationBar: buildBottomNavigationBar(),
-
-          floatingActionButton: buildFab(),
+      floatingActionButton: buildFab(),
     );
   }
 
@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         NavigationDestination(
             label: '领养',
             icon: Icon(Icons.pets_outlined),
-            selectedIcon: Icon(Icons.pets)),
+            selectedIcon: Icon(Icons.cruelty_free)),
         NavigationDestination(
             label: '发布',
             icon: Icon(Icons.feed_outlined),
@@ -46,19 +46,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildFab() {
-  return FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            _bottomNavigationBarSelectedIndex = 1;
-          });
-        },
-        child: const Icon(Icons.edit_outlined),
-      );
-}
-
+    return FloatingActionButton(
+      onPressed: () {
+        setState(() {
+          _bottomNavigationBarSelectedIndex = 1;
+        });
+      },
+      child: const Icon(Icons.edit_outlined),
+    );
+  }
 }
 
 Widget buildHomePageBody(int bottomNavigationBarSelectedIndex) {
-  return const SafeArea(child: Text("主页"));
-}
+  final Widget child;
 
+  switch (bottomNavigationBarSelectedIndex) {
+    case 0:
+      child = AdoptPage();
+    default:
+      throw UnimplementedError();
+  }
+
+  return SafeArea(child: child);
+}
