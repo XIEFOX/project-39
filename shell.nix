@@ -1,21 +1,19 @@
-let
-  pkgs = import <nixpkgs> {};
-in
-  pkgs.mkShell {
-    packages = with pkgs; [
-      libiconv
+{pkgs}:
+pkgs.mkShell {
+  packages = with pkgs; [
+    libiconv
 
-      fd
-      gnumake
+    fd
+    gnumake
 
-      alejandra
-      clang-tools
-      yamlfmt
-      taplo
-      deno
+    alejandra
+    clang-tools
+    yamlfmt
+    taplo
+    deno
 
-      protobuf
-      buf
-      protoc-gen-dart
-    ];
-  }
+    protobuf
+    buf
+    protoc-gen-dart
+  ];
+}

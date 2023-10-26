@@ -2,19 +2,4 @@ syntax = "proto3";
 
 package project_39.v1;
 
-service Project39Service {
-  rpc DisplayObjectsInfoBatch(DisplayObjectsInfoBatchRequest)
-      returns (DisplayObjectsInfoBatchResponse);
-}
-
-message DisplayObjectsInfoBatchRequest { int32 batch_size = 1; }
-
-message DisplayObjectsInfoBatchResponse {
-  repeated DisplayObjectsInfo display_objects_info = 1;
-}
-
-message DisplayObjectsInfo {
-  string url = 1;
-  string name = 2;
-  string desc = 3;
-}
+service Project39Service {}
