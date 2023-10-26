@@ -76,7 +76,8 @@ message DisplayObject {
   string profile_picture_url = 2;
   string profile_picture_bin = 3;
 
-  string desc = 4;
+  string category = 4;
+  string desc = 5;
 }
 
 message GetDisplayObjectBatchRequest { uint32 len = 1; }

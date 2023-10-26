@@ -62,7 +62,7 @@ Widget buildHomePageBody(int bottomNavigationBarSelectedIndex) {
 
   switch (bottomNavigationBarSelectedIndex) {
     case 0:
-      child = AdoptPage();
+      child = const AdoptPage();
     default:
       throw UnimplementedError();
   }

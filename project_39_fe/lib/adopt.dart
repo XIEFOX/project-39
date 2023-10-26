@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:project_39_fe/src/constant.dart';
 
 class AdoptPage extends StatefulWidget {
+  const AdoptPage({super.key});
+
   @override
   State<AdoptPage> createState() => _AdoptPageState();
 }
@@ -28,8 +30,8 @@ class _AdoptPageState extends State<AdoptPage> {
 
   List<Widget> buildCards() {
     final List<(String, String, String)> xs = [
-      ("$object_storage_url/objs/0/profile.png", "叫什么好呢", "有什么性格呢、爱吃什么呢"),
-      ("$object_storage_url/objs/0/profile.png", "叫什么好呢", "有什么性格呢、爱吃什么呢"),
+      ("$objectStorageUrl/objs/0/profile.png", "叫什么好呢", "有什么性格呢、爱吃什么呢"),
+      ("$objectStorageUrl/objs/0/profile.png", "叫什么好呢", "有什么性格呢、爱吃什么呢"),
     ];
 
     return xs.map(buildCard).toList();
@@ -70,10 +72,10 @@ class FilledCardExample extends StatelessWidget {
                   flex: 6,
                   child: Container(
                     width: double.infinity,
-                    margin: EdgeInsets.all(3),
+                    margin: const EdgeInsets.all(3),
                     child: Positioned.fill(
                         child: ClipRRect(
-                            borderRadius: BorderRadius.only(
+                            borderRadius: const BorderRadius.only(
                                 bottomLeft: Radius.circular(80),
                                 bottomRight: Radius.circular(80),
                                 topRight: Radius.circular(20),
@@ -100,16 +102,16 @@ class FilledCardExample extends StatelessWidget {
               Expanded(
                   flex: 1,
                   child: Row(children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     ),
                     IconButton.filled(
                         onPressed: onPressed,
                         icon: const Icon(Icons.favorite_rounded)),
-                    SizedBox(
+                    const SizedBox(
                       width: 330,
                     ),
-                    ActionChipExample()
+                    const ActionChipExample()
                   ]))
             ],
           )),
