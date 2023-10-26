@@ -16,8 +16,42 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _bottomNavigationBarSelectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      body: buildHomePageBody(_bottomNavigationBarSelectedIndex),
+      bottomNavigationBar: buildBottomNavigationBar(),
+    );
   }
+
+  Widget buildBottomNavigationBar() {
+    return NavigationBar(
+      onDestinationSelected: (selectedIndex) {
+        setState(() {
+          _bottomNavigationBarSelectedIndex = selectedIndex;
+        });
+      },
+      selectedIndex: _bottomNavigationBarSelectedIndex,
+      destinations: const [
+        NavigationDestination(
+            label: '探索',
+            icon: Icon(Icons.explore_outlined),
+            selectedIcon: Icon(Icons.explore)),
+        NavigationDestination(
+            label: '资讯',
+            icon: Icon(Icons.feed_outlined),
+            selectedIcon: Icon(Icons.feed)),
+        NavigationDestination(
+            label: '我的',
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person)),
+      ],
+    );
+  }
+}
+
+Widget buildHomePageBody(int bottomNavigationBarSelectedIndex) {
+  throw UnimplementedError();
 }
