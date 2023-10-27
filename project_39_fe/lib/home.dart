@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project_39_fe/fab.dart';
+import 'package:project_39_fe/lingy.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildFab() {
+    
   return FloatingActionButton(
         onPressed: () {
           setState(() {
@@ -59,6 +62,8 @@ class _HomePageState extends State<HomePage> {
 }
 
 Widget buildHomePageBody(int bottomNavigationBarSelectedIndex) {
+  if(bottomNavigationBarSelectedIndex==0)return BuildPage();
+  if(bottomNavigationBarSelectedIndex==1)return Adopt();
   return const SafeArea(child: Text("主页"));
 }
 
