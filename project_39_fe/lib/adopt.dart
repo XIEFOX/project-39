@@ -80,6 +80,7 @@ Widget buildCardLayout(BuildContext context, String title, String imageUrl,
           children: [
             SizedBox(
                 height: height,
+                width: height * 9 / 6,
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
@@ -108,54 +109,55 @@ Widget buildCard(BuildContext context, String title, String imageUrl,
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      SizedBox(
-          height: 184,
-          child: Stack(children: [
-            Positioned.fill(
-              child: Ink.image(
-                image: NetworkImage(imageUrl),
-                fit: BoxFit.cover,
-                child: Container(),
-              ),
-            ),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Semantics(
-                container: true,
-                header: true,
-                child: Text(
-                  title,
+      Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: SizedBox(
+          height: 184 * 0.9,
+          child: ClipRect(
+            child: Align(
+              alignment: Alignment.center,
+              child: AspectRatio(
+                aspectRatio: 16 / 9, // 16:9 比例
+                child: Ink.image(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                  child: Container(),
                 ),
               ),
             ),
-          ])),
-      // Description and share/explore buttons.
-      Semantics(
-        container: true,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: DefaultTextStyle(
-            softWrap: false,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.titleMedium!,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    description,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: Colors.black54),
-                  ),
-                ),
-                Text(category),
-                Text(location),
-              ],
-            ),
+          ),
+        ),
+      ),
+
+      // Title
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        child: Semantics(
+          container: true,
+          header: true,
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ),
+      ),
+      // Description, category, and location
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        child: DefaultTextStyle(
+          softWrap: false,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.titleSmall!,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                description,
+                style: const TextStyle(color: Colors.black54),
+              ),
+              Text(category),
+              Text(location),
+            ],
           ),
         ),
       ),

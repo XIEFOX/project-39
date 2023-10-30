@@ -22,6 +22,8 @@ pub(crate) fn save_user_profile_picture_bin(user_profile_picture_bin: Vec<u8>) -
 
 pub const SIMPLE_LOCAL_STORE_URL: &str = "../data/objs";
 
+pub const SIMPLE_OBJ_STORE_URL: &str = "http://127.0.0.1:8000";
+
 fn scan_objs_id(path: &Path) -> usize {
     let path = fs::canonicalize(path).unwrap();
     log::info!("scan_objs_id: path = `{path:?}`");
@@ -52,9 +54,29 @@ pub fn simple_local_batch(url: &str) -> GetDisplayObjectBatchResponse {
                 location,
             } = serde_json::from_str(&json).unwrap();
 
+            let path = Path::new(url);
+            let path = fs::canonicalize(path).unwrap();
+            let dir = path.join(format!("{i}")).read_dir().unwrap();
+
+            let mut obj_profile_picture_url = None;
+            for x in dir {
+                let file_name = x.unwrap().file_name();
+                let file_name = file_name.to_str().unwrap();
+                if file_name.starts_with("profile") {
+                    obj_profile_picture_url = Some({
+                        let uri: tonic::transport::Uri = SIMPLE_OBJ_STORE_URL.parse().unwrap();
+                        let path = file_name.to_string();
+                        let path = Path::new(&path).to_str().unwrap();
+
+                        format!("{uri}objs/{i}/{path}")
+                    });
+                }
+            }
+            let obj_profile_picture_url = obj_profile_picture_url.unwrap_or_default();
+
             DisplayObject {
                 obj_id: i as i64,
-                obj_profile_picture_url: format!("{url}/profile.png"),
+                obj_profile_picture_url,
                 obj_profile_picture_bin: String::new(),
                 obj_name,
                 category,
