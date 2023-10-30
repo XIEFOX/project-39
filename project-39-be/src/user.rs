@@ -2,7 +2,10 @@ use std::io;
 
 use sqlx::{Pool, Sqlite};
 
-use crate::{obj_store::save_user_profile_picture_bin, project_39_pb::*, utils::hash_password};
+use crate::{
+    obj_store::save_user_profile_picture_bin, project_39_pb::*, token::new_token,
+    utils::hash_password,
+};
 
 pub async fn get_user_info(
     sql_executor: &Pool<Sqlite>,
@@ -53,6 +56,7 @@ pub async fn put_user_info(
 
 pub async fn log_in(
     sql_executor: &Pool<Sqlite>,
+    redis_conn: &mut redis::Connection,
     user_id: i64,
     password: String,
 ) -> anyhow::Result<LogInResponse> {
@@ -76,14 +80,17 @@ pub async fn log_in(
     log::info!("log in: `{user_id}`");
     Ok(LogInResponse {
         user_id,
-        token: todo!(),
+        token: new_token(redis_conn, user_id).unwrap(),
     })
 }
 
 #[cfg(test)]
 
 mod tests {
-    use crate::{project_39_pb::GetUserInfoResponse, test_utils::new_test_sqlite_connection};
+    use crate::{
+        project_39_pb::GetUserInfoResponse,
+        test_utils::{new_test_redis_client, new_test_sqlite_connection},
+    };
 
     use super::{get_user_info, log_in, put_user_info};
 
@@ -93,9 +100,11 @@ mod tests {
         let r_user_email = "test@test.com";
         let password = "abc123";
 
-        let conn = new_test_sqlite_connection().await;
+        let sql_executor = new_test_sqlite_connection().await;
+        let redis_conn = new_test_redis_client();
+
         let r_user_id = put_user_info(
-            &conn,
+            &sql_executor,
             r_user_name.into(),
             r_user_email.into(),
             None,
@@ -109,13 +118,20 @@ mod tests {
             user_name,
             user_email,
             user_profile_picture_url,
-        } = get_user_info(&conn, r_user_id).await.unwrap();
+        } = get_user_info(&sql_executor, r_user_id).await.unwrap();
 
         assert!(r_user_id == user_id);
         assert!(r_user_name == user_name);
         assert!(r_user_email == user_email);
         assert!(user_profile_picture_url.is_empty());
 
-        log_in(&conn, user_id, password.into()).await.unwrap();
+        log_in(
+            &sql_executor,
+            &mut redis_conn.get_connection().unwrap(),
+            user_id,
+            password.into(),
+        )
+        .await
+        .unwrap();
     }
 }

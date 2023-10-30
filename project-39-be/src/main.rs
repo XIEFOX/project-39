@@ -7,7 +7,8 @@ use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
 use tonic::{transport::Server, Request, Response, Status};
 
 const SERVER_ADDR: &str = "127.0.0.1:3250";
-const SQLITE_DATABASE_URL: &str = "sqlite://../data/db/test_db.db";
+const SQLITE_URL: &str = "sqlite://../data/db/test_db.db";
+const REDIS_URL: &str = "redis://127.0.0.1/";
 
 #[tokio::main]
 async fn main() {
@@ -18,7 +19,8 @@ async fn main() {
     log::info!("Server will start listening at `{SERVER_ADDR}`");
 
     Server::builder()
-        .add_service(miku_server)
+        .accept_http1(true)
+        .add_service(tonic_web::enable(miku_server))
         .serve(SERVER_ADDR.parse().unwrap())
         .await
         .unwrap();
@@ -28,17 +30,25 @@ type GrpcResult<T> = std::result::Result<Response<T>, Status>;
 
 struct MikuServer {
     sqlite_pool: Pool<Sqlite>,
+    redis_client: redis::Client,
 }
 
 impl MikuServer {
     async fn new() -> Self {
+        log::info!("try connect to sqlite: `{SQLITE_URL}`");
         let sqlite_pool = SqlitePoolOptions::new()
             .max_connections(1)
-            .connect(SQLITE_DATABASE_URL)
+            .connect(SQLITE_URL)
             .await
             .unwrap();
 
-        Self { sqlite_pool }
+        log::info!("try connect to redis: `{REDIS_URL}`");
+        let redis_client = redis::Client::open(REDIS_URL).unwrap();
+
+        Self {
+            sqlite_pool,
+            redis_client,
+        }
     }
 }
 
@@ -51,7 +61,7 @@ impl Project39Service for MikuServer {
         user::get_user_info(&self.sqlite_pool, request.into_inner().user_id)
             .await
             .map_err(|err| Status::aborted(err.to_string()))
-            .map(|x| Response::new(x))
+            .map(Response::new)
     }
     async fn put_user_info(
         &self,

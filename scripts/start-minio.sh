@@ -2,6 +2,8 @@
 set -eu -o pipefail
 source ./scripts/prepare-env.sh
 
+docker rm -f "${CONTAINER_PREFIX}-minio"
+
 docker run -td \
   --name "${CONTAINER_PREFIX}-minio" \
   -p 9000:9000 \

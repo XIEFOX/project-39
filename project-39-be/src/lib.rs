@@ -11,13 +11,18 @@ pub mod project_39_pb {
 mod test_utils {
     use sqlx::sqlite::SqlitePoolOptions;
 
-    const DATABASE_URL: &str = "sqlite://../data/db/test_db.db";
+    const SQLITE_URL: &str = "sqlite://../data/db/test_db.db";
+    const REDIS_URL: &str = "redis://127.0.0.1/";
 
     pub(crate) async fn new_test_sqlite_connection() -> sqlx::Pool<sqlx::Sqlite> {
         SqlitePoolOptions::new()
             .max_connections(1)
-            .connect(DATABASE_URL)
+            .connect(SQLITE_URL)
             .await
             .unwrap()
+    }
+
+    pub(crate) fn new_test_redis_client() -> redis::Client {
+        redis::Client::open(REDIS_URL).unwrap()
     }
 }

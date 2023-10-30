@@ -1,12 +1,25 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:project_39_fe/home.dart';
 import 'package:project_39_fe/register.dart';
+import 'package:project_39_fe/rpc.dart';
+import 'package:project_39_fe/src/generated/project_39/v1/project_39.pb.dart';
 
 const _horizontalPadding = 24.0;
 
-class LoginPage extends StatelessWidget {
+final TextEditingController userIdTextEditingController =
+    TextEditingController();
+final TextEditingController passwordTextEditingController =
+    TextEditingController();
+
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -65,6 +78,7 @@ class _UsernameTextField extends StatelessWidget {
     return SizedBox(
         width: 480,
         child: TextField(
+          controller: userIdTextEditingController,
           textInputAction: TextInputAction.next,
           restorationId: 'username_text_field',
           cursorColor: colorScheme.onSurface,
@@ -88,6 +102,7 @@ class _PasswordTextField extends StatelessWidget {
     return SizedBox(
         width: 480,
         child: TextField(
+          controller: passwordTextEditingController,
           restorationId: 'password_text_field',
           cursorColor: colorScheme.onSurface,
           obscureText: true,
@@ -145,6 +160,12 @@ class _RegisterAndNextButtons extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
+                  final client = newRpcClient();
+                  client.logIn(LogInRequest(
+                    userId: Int64(int.parse(userIdTextEditingController.text)),
+                    password: passwordTextEditingController.text,
+                  ));
+
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) {
                       return const HomePage();
