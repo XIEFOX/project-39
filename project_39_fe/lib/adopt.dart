@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:project_39_fe/src/constant.dart';
+
+const height = 298.0;
 
 class AdoptPage extends StatefulWidget {
   const AdoptPage({super.key});
@@ -11,136 +12,122 @@ class AdoptPage extends StatefulWidget {
 class _AdoptPageState extends State<AdoptPage> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 200.0, vertical: 20.0),
-        child: ListView(
-          children: buildCards(),
-        ));
-  }
-
-  Widget buildCard((String, String, String) xs) {
-    return FilledCardExample(
-      enabled: false,
-      name: xs.$2,
-      url: xs.$1,
-      decs: xs.$2,
-      useravarurl: xs.$1,
+    return Scrollbar(
+      child: ListView(
+        padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
+        children: const [],
+      ),
     );
-  }
-
-  List<Widget> buildCards() {
-    final List<(String, String, String)> xs = [
-      ("$objectStorageUrl/objs/0/profile.png", "叫什么好呢", "有什么性格呢、爱吃什么呢"),
-      ("$objectStorageUrl/objs/0/profile.png", "叫什么好呢", "有什么性格呢、爱吃什么呢"),
-    ];
-
-    return xs.map(buildCard).toList();
   }
 }
 
-class FilledCardExample extends StatelessWidget {
-  final bool enabled;
-  final String name;
-  final String url;
-  final String decs;
-  final String useravarurl;
+class AdoptData {
+  AdoptData(
+      {required this.title,
+      required this.imageUrl,
+      required this.description,
+      required this.category,
+      required this.location});
 
-  const FilledCardExample(
-      {super.key,
-      required this.enabled,
-      required this.name,
-      required this.url,
-      required this.decs,
-      required this.useravarurl});
+  final String title;
+  final String imageUrl;
+  final String description;
+  final String category;
+  final String location;
+}
 
-  @override
-  Widget build(BuildContext context) {
-    final VoidCallback? onPressed =
-        enabled ? () {} : null; //这边有一个收养的onpressed事件
-    return SingleChildScrollView(
-        child: Flexible(
-      child: Card(
-        elevation: 0,
-        color: Theme.of(context).colorScheme.surfaceVariant,
-        child: SizedBox(
-          width: 500,
-          height: 400,
-          child: Center(
-              child: Column(
-            children: <Widget>[
-              Expanded(
-                  flex: 6,
-                  child: Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.all(3),
-                    child: Positioned.fill(
-                        child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(80),
-                                bottomRight: Radius.circular(80),
-                                topRight: Radius.circular(20),
-                                topLeft: Radius.circular(20)),
-                            child: Image.network(
-                              url,
-                              fit: BoxFit.cover,
-                            ))),
-                  )),
-              Expanded(
-                flex: 3,
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage(useravarurl),
-                  ),
-                  title: Text(name),
-                  subtitle: Text(
-                    decs,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 3,
-                  ),
-                ),
-              ),
-              Expanded(
-                  flex: 1,
-                  child: Row(children: [
-                    const SizedBox(
-                      width: 20,
+Widget buildCardLayout(BuildContext context, String title, String imageUrl,
+    String description, String category, String location) {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 8),
+    child: SafeArea(
+      top: false,
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            SizedBox(
+                height: height,
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: () {},
+                    splashColor: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.12),
+                    highlightColor: Colors.transparent,
+                    child: Semantics(
+                      label: title,
+                      child: buildCard(context, title, imageUrl, description,
+                          category, location),
                     ),
-                    IconButton.filled(
-                        onPressed: onPressed,
-                        icon: const Icon(Icons.favorite_rounded)),
-                    const SizedBox(
-                      width: 330,
-                    ),
-                    const ActionChipExample()
-                  ]))
-            ],
-          )),
+                  ),
+                ))
+          ],
         ),
       ),
-    ));
-  }
+    ),
+  );
 }
 
-class ActionChipExample extends StatefulWidget {
-  const ActionChipExample({super.key});
-
-  @override
-  State<ActionChipExample> createState() => _ActionChipExampleState();
-}
-
-class _ActionChipExampleState extends State<ActionChipExample> {
-  bool favorite = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return ActionChip(
-      avatar: Icon(favorite ? Icons.favorite : Icons.favorite_border),
-      label: const Text('领养'),
-      onPressed: () {
-        setState(() {
-          favorite = !favorite;
-        });
-      },
-    );
-  }
+Widget buildCard(BuildContext context, String title, String imageUrl,
+    String description, String category, String location) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SizedBox(
+          height: 184,
+          child: Stack(children: [
+            Positioned.fill(
+              child: Ink.image(
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+                child: Container(),
+              ),
+            ),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Semantics(
+                container: true,
+                header: true,
+                child: Text(
+                  title,
+                ),
+              ),
+            ),
+          ])),
+      // Description and share/explore buttons.
+      Semantics(
+        container: true,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: DefaultTextStyle(
+            softWrap: false,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleMedium!,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    description,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Colors.black54),
+                  ),
+                ),
+                Text(category),
+                Text(location),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
 }
