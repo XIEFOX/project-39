@@ -1,8 +1,12 @@
-use project_39_be::project_39_pb::{
-    project39_service_server::{Project39Service, Project39ServiceServer},
-    *,
-};
+use project_39_be::obj_store::SIMPLE_LOCAL_STORE_URL;
 use project_39_be::user;
+use project_39_be::{
+    obj_store::simple_local_batch,
+    project_39_pb::{
+        project39_service_server::{Project39Service, Project39ServiceServer},
+        *,
+    },
+};
 use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
 use tonic::{
     service::{self},
@@ -132,9 +136,9 @@ impl Project39Service for MikuServer {
 
     async fn get_display_object_batch(
         &self,
-        request: Request<GetDisplayObjectBatchRequest>,
+        _request: Request<GetDisplayObjectBatchRequest>,
     ) -> GrpcResult<GetDisplayObjectBatchResponse> {
-        todo!()
+        Ok(Response::new(simple_local_batch(SIMPLE_LOCAL_STORE_URL)))
     }
     async fn put_display_object_batch(
         &self,
