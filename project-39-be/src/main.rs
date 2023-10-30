@@ -4,11 +4,24 @@ use project_39_be::project_39_pb::{
 };
 use project_39_be::user;
 use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite};
-use tonic::{transport::Server, Request, Response, Status};
+use tonic::{
+    service::{self},
+    transport::Server,
+    Request, Response, Status,
+};
+use tonic_web::GrpcWebLayer;
 
 const SERVER_ADDR: &str = "127.0.0.1:3250";
 const SQLITE_URL: &str = "sqlite://../data/db/test_db.db";
 const REDIS_URL: &str = "redis://127.0.0.1/";
+
+fn grpc_web_interceptor(mut req: Request<()>) -> Result<Request<()>, Status> {
+    req.metadata_mut().insert(
+        "content-type",
+        tonic::metadata::AsciiMetadataValue::from_static("application/grpc-web"),
+    );
+    Ok(req)
+}
 
 #[tokio::main]
 async fn main() {
@@ -20,10 +33,14 @@ async fn main() {
 
     Server::builder()
         .accept_http1(true)
+        .layer(GrpcWebLayer::new())
+        .layer(service::interceptor(grpc_web_interceptor))
         .add_service(tonic_web::enable(miku_server))
         .serve(SERVER_ADDR.parse().unwrap())
         .await
         .unwrap();
+
+    log::info!("server shutdown")
 }
 
 type GrpcResult<T> = std::result::Result<Response<T>, Status>;
@@ -97,7 +114,17 @@ impl Project39Service for MikuServer {
     }
 
     async fn log_in(&self, request: Request<LogInRequest>) -> GrpcResult<LogInResponse> {
-        todo!()
+        let LogInRequest { user_id, password } = request.into_inner();
+
+        user::log_in(
+            &self.sqlite_pool,
+            &mut self.redis_client.get_connection().unwrap(),
+            user_id,
+            password,
+        )
+        .await
+        .map_err(|err| Status::aborted(err.to_string()))
+        .map(Response::new)
     }
     async fn log_out(&self, request: Request<LogOutRequest>) -> GrpcResult<LogOutResponse> {
         todo!()

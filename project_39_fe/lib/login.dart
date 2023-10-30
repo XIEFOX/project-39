@@ -161,16 +161,28 @@ class _RegisterAndNextButtons extends StatelessWidget {
                 ),
                 onPressed: () {
                   final client = newRpcClient();
-                  client.logIn(LogInRequest(
+
+                  client
+                      .logIn(LogInRequest(
                     userId: Int64(int.parse(userIdTextEditingController.text)),
                     password: passwordTextEditingController.text,
-                  ));
-
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) {
-                      return const HomePage();
-                    },
-                  ));
+                  ))
+                      .then((resp) {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return const HomePage();
+                      },
+                    ));
+                  }).onError((error, stackTrace) {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text("登陆失败"),
+                            content: SelectableText("$error"),
+                          );
+                        });
+                  });
                 },
                 child: const Padding(
                   padding: buttonTextPadding,

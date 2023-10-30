@@ -6,3 +6,5 @@ set -eu -o pipefail
 ./scripts/start-minio.sh
 (cd project-39-be/ && RUST_LOG=info cargo run &)
 ./scripts/debug-fe.sh
+
+pkill -P $$
