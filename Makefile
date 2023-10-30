@@ -16,6 +16,7 @@ fmt:
 	(dart format -o none .)
 	(taplo format)
 	(cd ${RUST_PROJECT_ROOT}/ && cargo fmt)
+	(sqlfluff format --dialect sqlite .)
 
 lint:
 	(cd proto/ && buf lint)

@@ -2,6 +2,7 @@
 pkgs.mkShell {
   packages = with pkgs; [
     libiconv
+    darwin.apple_sdk.frameworks.Security
 
     fd
     gnumake
@@ -11,6 +12,7 @@ pkgs.mkShell {
     yamlfmt
     taplo
     deno
+    sqlfluff
 
     protobuf
     buf
