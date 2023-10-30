@@ -80,7 +80,7 @@ pub fn simple_local_batch(url: &str) -> GetDisplayObjectBatchResponse {
             DisplayObject {
                 obj_id: i as i64,
                 obj_profile_picture_url,
-                obj_profile_picture_bin: String::new(),
+                obj_profile_picture_bin: Vec::new(),
                 obj_name,
                 category,
                 desc,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_39_fe/adopt.dart';
+import 'package:project_39_fe/upload.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -63,6 +64,8 @@ Widget buildHomePageBody(int bottomNavigationBarSelectedIndex) {
   switch (bottomNavigationBarSelectedIndex) {
     case 0:
       child = const AdoptPage();
+    case 1:
+      child = const UploadPage();
     default:
       throw UnimplementedError();
   }

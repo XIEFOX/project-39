@@ -72,7 +72,7 @@ message DisplayObject {
   int64 obj_id = 1;
 
   string obj_profile_picture_url = 2;
-  string obj_profile_picture_bin = 3;
+  bytes obj_profile_picture_bin = 3;
 
   string obj_name = 4;
   string category = 5;
