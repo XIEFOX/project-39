@@ -78,6 +78,8 @@ message DisplayObject {
   string category = 5;
   string desc = 6;
   string location = 7;
+
+  string ownership = 8;
 }
 
 message GetDisplayObjectBatchRequest { uint32 len = 1; }

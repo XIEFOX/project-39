@@ -1,4 +1,6 @@
-use project_39_be::obj_store::SIMPLE_LOCAL_STORE_URL;
+use project_39_be::obj_store::{
+    get_display_object_status, init_display_object_status, SIMPLE_LOCAL_STORE_URL,
+};
 use project_39_be::user;
 use project_39_be::{
     obj_store::simple_local_batch,
@@ -31,7 +33,10 @@ fn grpc_web_interceptor(mut req: Request<()>) -> Result<Request<()>, Status> {
 async fn main() {
     env_logger::init();
 
-    let miku_server = Project39ServiceServer::new(MikuServer::new().await);
+    let miku_server = MikuServer::new().await;
+    init_display_object_status(&miku_server.sqlite_pool).await;
+
+    let miku_server = Project39ServiceServer::new(miku_server);
 
     log::info!("Server will start listening at `{SERVER_ADDR}`");
 
@@ -157,7 +162,10 @@ impl Project39Service for MikuServer {
         &self,
         request: Request<GetDisplayObjectStatusRequest>,
     ) -> GrpcResult<GetDisplayObjectStatusResponse> {
-        todo!()
+        get_display_object_status(&self.sqlite_pool, request.into_inner().obj_id)
+            .await
+            .map_err(|err| Status::aborted(err.to_string()))
+            .map(Response::new)
     }
     async fn put_display_object_status(
         &self,

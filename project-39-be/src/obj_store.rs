@@ -2,9 +2,12 @@ use std::{env, fs, path::Path};
 
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
+use sqlx::{Pool, Sqlite};
 use uuid::Uuid;
 
-use crate::project_39_pb::{DisplayObject, GetDisplayObjectBatchResponse};
+use crate::project_39_pb::{
+    DisplayObject, GetDisplayObjectBatchResponse, GetDisplayObjectStatusResponse,
+};
 
 static STORE_PATH_PREFIX: Lazy<String> = Lazy::new(|| {
     let store_path_prefix = env::var("STORE_PATH_PREFIX").unwrap();
@@ -82,11 +85,42 @@ pub fn simple_local_batch(url: &str) -> GetDisplayObjectBatchResponse {
                 category,
                 desc,
                 location,
+                ownership: String::new(),
             }
         })
         .collect();
 
     GetDisplayObjectBatchResponse { objs }
+}
+
+pub async fn init_display_object_status(sql_executor: &Pool<Sqlite>) {
+    let path = Path::new(SIMPLE_LOCAL_STORE_URL);
+    let path = fs::canonicalize(path).unwrap();
+    for _ in 1..scan_objs_id(&path) {
+        sqlx::query!("insert into objs (ownership) values ('')")
+            .execute(sql_executor)
+            .await
+            .unwrap();
+    }
+}
+
+pub async fn get_display_object_status(
+    sql_executor: &Pool<Sqlite>,
+    i: i64,
+) -> anyhow::Result<GetDisplayObjectStatusResponse> {
+    let obj = simple_local_batch(SIMPLE_LOCAL_STORE_URL).objs;
+    let mut obj = obj[(i - 1) as usize].clone();
+
+    let ownership = sqlx::query!("select ownership from objs where obj_id = ?", i)
+        .fetch_one(sql_executor)
+        .await
+        .unwrap()
+        .ownership;
+
+    obj.ownership = ownership.unwrap_or_default();
+
+    let obj = Some(obj);
+    Ok(GetDisplayObjectStatusResponse { obj })
 }
 
 #[cfg(test)]

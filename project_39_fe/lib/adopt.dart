@@ -1,3 +1,4 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:project_39_fe/rpc.dart';
 import 'package:project_39_fe/src/generated/project_39/v1/project_39.pb.dart';
@@ -33,7 +34,7 @@ class _AdoptPageState extends State<AdoptPage> {
               controller: scrollController,
               padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
               children: snapshot.data!.map((e) {
-                return buildCardLayout(context, e.title, e.imageUrl,
+                return buildCardLayout(context, e.objId, e.title, e.imageUrl,
                     e.description, e.category, e.location);
               }).toList(),
             ),
@@ -44,12 +45,14 @@ class _AdoptPageState extends State<AdoptPage> {
 
 class AdoptData {
   AdoptData(
-      {required this.title,
+      {required this.objId,
+      required this.title,
       required this.imageUrl,
       required this.description,
       required this.category,
       required this.location});
 
+  final int objId;
   final String title;
   final String imageUrl;
   final String description;
@@ -63,6 +66,7 @@ Future<List<AdoptData>> getAdoptDataBatch() async {
       await client.getDisplayObjectBatch(GetDisplayObjectBatchRequest(len: 20));
   return batch.objs.map((e) {
     return AdoptData(
+        objId: e.objId.toInt(),
         title: e.objName,
         imageUrl: e.objProfilePictureUrl,
         description: e.desc,
@@ -71,8 +75,8 @@ Future<List<AdoptData>> getAdoptDataBatch() async {
   }).toList();
 }
 
-Widget buildCardLayout(BuildContext context, String title, String imageUrl,
-    String description, String category, String location) {
+Widget buildCardLayout(BuildContext context, int objId, String title,
+    String imageUrl, String description, String category, String location) {
   return Container(
     margin: const EdgeInsets.only(bottom: 8),
     child: SafeArea(
@@ -88,7 +92,20 @@ Widget buildCardLayout(BuildContext context, String title, String imageUrl,
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return Scaffold(
+                          appBar: AppBar(
+                            leading: BackButton(
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                          body: buildDetailPage(context, objId, title, imageUrl,
+                              description, category, location),
+                        );
+                      }));
+                    },
                     splashColor: Theme.of(context)
                         .colorScheme
                         .onSurface
@@ -164,6 +181,94 @@ Widget buildCard(BuildContext context, String title, String imageUrl,
             ],
           ),
         ),
+      ),
+    ],
+  );
+}
+
+Widget buildDetailPage(BuildContext context, int objId, String title,
+    String imageUrl, String description, String category, String location) {
+  final card =
+      buildCard(context, title, imageUrl, description, category, location);
+
+  return FutureBuilder(
+    future: buildDetailPageFuture(
+        context, objId, title, imageUrl, description, category, location, card),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState != ConnectionState.done) {
+        return const CircularProgressIndicator();
+      }
+
+      if (snapshot.hasError) {
+        return Center(child: Text("Error: ${snapshot.error}"));
+      }
+
+      return snapshot.data!;
+    },
+  );
+}
+
+Future<Widget> buildDetailPageFuture(
+    BuildContext context,
+    int objId,
+    String title,
+    String imageUrl,
+    String description,
+    String category,
+    String location,
+    Widget card) async {
+  final client = newRpcClient();
+  final ret = await client.getDisplayObjectStatus(
+      GetDisplayObjectStatusRequest(objId: Int64(objId)));
+
+  String status;
+  if (ret.obj.ownership.isEmpty) {
+    status = "领养";
+  } else {
+    status = "已经由用户 @${ret.obj.ownership} 领养";
+  }
+
+  return Column(
+    children: [
+      const Spacer(
+        flex: 1,
+      ),
+      card,
+      const Spacer(
+        flex: 2,
+      ),
+      Center(
+        child: TextButton(
+          child: Text(status),
+          onPressed: () async {
+            if (ret.obj.ownership.isNotEmpty) {
+              final obj = ret.obj;
+              obj.ownership = "";
+              await client.putDisplayObjectStatus(
+                  PutDisplayObjectStatusRequest(obj: obj));
+            }
+
+            // ignore: use_build_context_synchronously
+            await showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('领养成功'),
+                content: Text("带$title回家吧～"),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context, 'OK');
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+      const Spacer(
+        flex: 1,
       ),
     ],
   );

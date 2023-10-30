@@ -6,3 +6,8 @@ CREATE TABLE users (
     user_email TEXT,
     user_profile_picture_url TEXT
 );
+
+CREATE TABLE objs (
+    obj_id INTEGER PRIMARY KEY,
+    ownership TEXT
+);
