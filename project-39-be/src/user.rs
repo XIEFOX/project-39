@@ -69,7 +69,9 @@ pub async fn log_in(
     .user_password_salted
     .unwrap();
 
-    if user_password_salted != hash_password(password) {
+    let hash_password = hash_password(password);
+    if user_password_salted != hash_password {
+        log::error!("`{user_password_salted}` != `{hash_password}`");
         return Err(io::Error::new(
             std::io::ErrorKind::PermissionDenied,
             "user_password_salted != hash_password",
@@ -96,6 +98,8 @@ mod tests {
 
     #[tokio::test(flavor = "multi_thread")]
     async fn test() {
+        env_logger::init();
+
         let r_user_name = "test_01";
         let r_user_email = "test@test.com";
         let password = "abc123";

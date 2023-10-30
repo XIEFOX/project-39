@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:project_39_fe/rpc.dart';
+import 'package:project_39_fe/src/generated/project_39/v1/project_39.pbgrpc.dart';
 
 const _horizontalPadding = 24.0;
+
+final TextEditingController userNameTextEditingController =
+    TextEditingController();
+final TextEditingController passwordTextEditingController =
+    TextEditingController();
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -63,6 +70,7 @@ class _UsernameTextField extends StatelessWidget {
     return SizedBox(
         width: 480,
         child: TextField(
+          controller: userNameTextEditingController,
           textInputAction: TextInputAction.next,
           restorationId: 'username_text_field',
           cursorColor: colorScheme.onSurface,
@@ -86,6 +94,7 @@ class _PasswordTextField extends StatelessWidget {
     return SizedBox(
         width: 480,
         child: TextField(
+          controller: passwordTextEditingController,
           restorationId: 'password_text_field',
           cursorColor: colorScheme.onSurface,
           obscureText: true,
@@ -115,23 +124,6 @@ class _RegisterAndNextButtons extends StatelessWidget {
             spacing: 0,
             alignment: MainAxisAlignment.end,
             children: [
-              // TextButton(
-              //   style: TextButton.styleFrom(
-              //     shape: const BeveledRectangleBorder(
-              //       borderRadius: BorderRadius.all(Radius.circular(7)),
-              //     ),
-              //   ),
-              //   onPressed: () {
-              //     Navigator.of(context, rootNavigator: true).pop();
-              //   },
-              //   child: Padding(
-              //     padding: buttonTextPadding,
-              //     child: Text(
-              //       '注册',
-              //       style: TextStyle(color: colorScheme.onSurface),
-              //     ),
-              //   ),
-              // ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   elevation: 8,
@@ -140,22 +132,40 @@ class _RegisterAndNextButtons extends StatelessWidget {
                   ),
                 ),
                 onPressed: () async {
-                  await showDialog<String>(
-                    context: context,
-                    builder: (BuildContext context) => AlertDialog(
-                      title: const Text('注册成功'),
-                      content: const Text('即将返回登陆页面'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context, 'OK');
-                            Navigator.pop(context);
-                          },
-                          child: const Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
+                  final client = newRpcClient();
+
+                  client
+                      .putUserInfo(PutUserInfoRequest(
+                    userName: userNameTextEditingController.text,
+                    password: passwordTextEditingController.text,
+                  ))
+                      .then((_) async {
+                    await showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('注册成功'),
+                        content: const Text('即将返回登陆页面'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, 'OK');
+                              Navigator.pop(context);
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).onError((error, stackTrace) {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text("注册失败"),
+                            content: SelectableText("$error"),
+                          );
+                        });
+                  });
                 },
                 child: const Padding(
                   padding: buttonTextPadding,
