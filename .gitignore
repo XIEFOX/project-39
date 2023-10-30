@@ -3,3 +3,4 @@ target/
 .DS_Store
 
 data/db/test_db.db
+data/redis/data

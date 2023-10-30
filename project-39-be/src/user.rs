@@ -1,8 +1,10 @@
+use std::io;
+
 use sqlx::{Pool, Sqlite};
 
 use crate::{obj_store::save_user_profile_picture_bin, project_39_pb::*, utils::hash_password};
 
-async fn get_user_info(
+pub async fn get_user_info(
     sql_executor: &Pool<Sqlite>,
     user_id: i64,
 ) -> anyhow::Result<GetUserInfoResponse> {
@@ -17,7 +19,7 @@ async fn get_user_info(
     })
 }
 
-async fn put_user_info(
+pub async fn put_user_info(
     sql_executor: &Pool<Sqlite>,
     user_name: String,
     user_email: String,
@@ -41,11 +43,40 @@ async fn put_user_info(
     )
     .execute(sql_executor)
     .await?;
-    let user_id = sqlx::query!("select last_insert_rowid() as user_id;")
+    let user_id = sqlx::query!("select last_insert_rowid() as user_id")
         .fetch_one(sql_executor)
         .await?;
     Ok(PutUserInfoResponse {
         user_id: user_id.user_id as i64,
+    })
+}
+
+pub async fn log_in(
+    sql_executor: &Pool<Sqlite>,
+    user_id: i64,
+    password: String,
+) -> anyhow::Result<LogInResponse> {
+    let user_password_salted = sqlx::query!(
+        "select user_password_salted from users where user_id = ?",
+        user_id
+    )
+    .fetch_one(sql_executor)
+    .await?
+    .user_password_salted
+    .unwrap();
+
+    if user_password_salted != hash_password(password) {
+        return Err(io::Error::new(
+            std::io::ErrorKind::PermissionDenied,
+            "user_password_salted != hash_password",
+        )
+        .into());
+    }
+
+    log::info!("log in: `{user_id}`");
+    Ok(LogInResponse {
+        user_id,
+        token: todo!(),
     })
 }
 
@@ -54,7 +85,7 @@ async fn put_user_info(
 mod tests {
     use crate::{project_39_pb::GetUserInfoResponse, test_utils::new_test_sqlite_connection};
 
-    use super::{get_user_info, put_user_info};
+    use super::{get_user_info, log_in, put_user_info};
 
     #[tokio::test(flavor = "multi_thread")]
     async fn test() {
@@ -84,5 +115,7 @@ mod tests {
         assert!(r_user_name == user_name);
         assert!(r_user_email == user_email);
         assert!(user_profile_picture_url.is_empty());
+
+        log_in(&conn, user_id, password.into()).await.unwrap();
     }
 }

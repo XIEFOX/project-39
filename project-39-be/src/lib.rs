@@ -1,5 +1,6 @@
 mod obj_store;
-mod user;
+mod token;
+pub mod user;
 mod utils;
 
 pub mod project_39_pb {
