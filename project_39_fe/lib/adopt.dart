@@ -4,6 +4,8 @@ import 'package:project_39_fe/src/generated/project_39/v1/project_39.pb.dart';
 
 const height = 298.0;
 
+final scrollController = ScrollController();
+
 class AdoptPage extends StatefulWidget {
   const AdoptPage({super.key});
 
@@ -26,7 +28,9 @@ class _AdoptPageState extends State<AdoptPage> {
           }
 
           return Scrollbar(
+            controller: scrollController,
             child: ListView(
+              controller: scrollController,
               padding: const EdgeInsets.only(top: 8, left: 8, right: 8),
               children: snapshot.data!.map((e) {
                 return buildCardLayout(context, e.title, e.imageUrl,
